@@ -32,10 +32,7 @@ public class MainSceneController
     private ScrollPane scrollpane;
     private TextArea textarea;
     @FXML
-    private Button chooseFile, enCrypt, deCrypt, mainScene;
-
-    @FXML
-    private Label choose, chooseComment;
+    private Label chooseComment;
     @FXML
     private void switchToMainScene(ActionEvent event) throws IOException {
         root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("index.fxml")));
@@ -81,7 +78,6 @@ public class MainSceneController
         try
         {
             File inputfile = fileChooser.showOpenDialog(stage);
-            //String fileName = inputfile.getName();
             fileManager = new FileManager();
             encryptor = new Encryptor(language);
             textarea = new TextArea();
@@ -119,7 +115,7 @@ public class MainSceneController
             encryptor.encryptSezar();
             fileManager.createOutputFile(encryptor.getEncryptedText(), "encrypt", language);
             textarea.setText(encryptor.getEncryptedText());
-            this.chooseComment.setTextFill(Color.color(0, 1, 0));;
+            this.chooseComment.setTextFill(Color.color(0, 1, 0));
             if (language == Language.ENGLISH) {
                 this.chooseComment.setText("New file with encrypted text was created");
             } else if (language == Language.UKRAINIAN) {
@@ -149,9 +145,9 @@ public class MainSceneController
                 encryptor.setEncryptedText(encryptor.getPlainText());
                 encryptor.setPlainText("");
             }
-                fileManager.createOutputFile(encryptor.decryptWithBrutForce(encryptor.getEncryptedText()), "decrypt", language);
+                fileManager.createOutputFile(encryptor.decrypt(encryptor.getEncryptedText()), "decrypt", language);
                 textarea.setText(encryptor.getPlainText());
-            this.chooseComment.setTextFill(Color.color(0, 1, 0));;
+            this.chooseComment.setTextFill(Color.color(0, 1, 0));
             if (language == Language.ENGLISH) {
                 this.chooseComment.setText("Look decryption results below");
             } else if (language == Language.UKRAINIAN) {

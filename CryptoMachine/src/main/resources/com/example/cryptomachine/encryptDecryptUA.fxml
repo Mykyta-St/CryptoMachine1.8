@@ -13,7 +13,7 @@
             AnchorPane.leftAnchor="50"
           AnchorPane.rightAnchor="50"
           spacing="10">
-        <Label fx:id="choose" text="Виберіть файл з інформацією, що ви хочете зашифрувати"
+        <Label text="Виберіть файл з інформацією, що ви хочете зашифрувати"
                style="-fx-font-size: 24; -fx-font-weight: BOLD;"
                AnchorPane.topAnchor="50"
                AnchorPane.rightAnchor="100"/>
@@ -21,8 +21,7 @@
               AnchorPane.leftAnchor="100"
               AnchorPane.rightAnchor="100"
               spacing="10">
-            <Button fx:id="chooseFile"
-                    text="Виберіть файл" onAction="#chooseInputFile"
+            <Button text="Виберіть файл" onAction="#chooseInputFile"
                     style="-fx-background-color: #4385F4; -fx-text-fill: white; -fx-font-size: 20;"
                     alignment="CENTER_RIGHT"/>
             <Label fx:id="chooseComment" text="Підтримуються файли .txt"
@@ -32,13 +31,12 @@
         <ScrollPane fx:id="scrollpane" fitToWidth="true" prefWidth="400" prefHeight="200"/>
         <HBox AnchorPane.topAnchor="400"
               spacing="10">
-            <Button fx:id="enCrypt" text="ЗАШИФРУВАТИ" onAction="#encrypttext"
-                    style="-fx-background-color: #4385F4; -fx-text-fill: white; -fx-font-size: 20;"
-                    alignment="CENTER_LEFT"/>
-            <Button fx:id="deCrypt" text="РОЗШИФРУВАТИ" onAction="#decrypttext"
+            <Button text="ЗАШИФРУВАТИ" onAction="#encrypttext"
+                    style="-fx-background-color: #4385F4; -fx-text-fill: white; -fx-font-size: 20;"/>
+            <Button text="РОЗШИФРУВАТИ" onAction="#decrypttext"
                     style="-fx-background-color: #4385F4; -fx-text-fill: white; -fx-font-size: 20;"
                     alignment="CENTER"/>
-            <Button fx:id="mainScene" text="Назад" onAction="#switchToMainScene"
+            <Button text="Назад" onAction="#switchToMainScene"
                     style="-fx-background-color: #4385F4; -fx-text-fill: white; -fx-font-size: 20;"
                     alignment="CENTER_RIGHT"/>
         </HBox>

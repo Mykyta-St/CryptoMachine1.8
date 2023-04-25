@@ -1,7 +1,4 @@
 package com.example.cryptomachine;
-
-import java.util.*;
-
 public class Alphabet
 {
     private Language language;

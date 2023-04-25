@@ -33,8 +33,7 @@
         <HBox AnchorPane.topAnchor="400"
               spacing="10">
             <Button fx:id="enCrypt" text="ЗашЫфровать" onAction="#encrypttext"
-                    style="-fx-background-color: #4385F4; -fx-text-fill: white; -fx-font-size: 20;"
-                    alignment="CENTER_LEFT"/>
+                    style="-fx-background-color: #4385F4; -fx-text-fill: white; -fx-font-size: 20;"/>
             <Button fx:id="deCrypt" text="РозшЫфровать" onAction="#decrypttext"
                     style="-fx-background-color: #4385F4; -fx-text-fill: white; -fx-font-size: 20;"
                     alignment="CENTER"/>
