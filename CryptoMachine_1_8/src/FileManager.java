@@ -1,8 +1,4 @@
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -15,7 +11,6 @@ public class FileManager
     {
         this.inputFile = inputFile;
         this.outputFile = createOutputFile(process);
-        //System.out.println(outputFile);
         writeToOutputFile(inputText);
     }
 
@@ -46,7 +41,6 @@ public class FileManager
             return null;
         }
     }
-
     public static boolean checkIfEmptyFile(Path inputFile)
     {
         try
@@ -86,15 +80,12 @@ public class FileManager
 
     public void writeToOutputFile (String outputText)
     {
-        try (RandomAccessFile randomAccessFile = new RandomAccessFile(outputFile.toFile(), "rw");
-             FileChannel channel = randomAccessFile.getChannel() )
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile.toFile())))
         {
-            ByteBuffer byteBuffer = ByteBuffer.allocate(outputText.getBytes().length);
-            byteBuffer.put(outputText.getBytes(StandardCharsets.UTF_8));
-            byteBuffer.flip();
-            channel.write(byteBuffer);
-        } catch (IOException e) {
-            e.printStackTrace();
+            writer.write(outputText);
+        } catch (Exception e)
+        {
+            System.out.println("Error while writing to file");
         }
     }
 
@@ -114,48 +105,8 @@ public class FileManager
         }
     }
 
-    /*
-    private String decryptedFileName(Path fileName)
+    public Path getOutputFile ()
     {
-        String currentFileName = fileName.getFileName().toString();
-
-        if (currentFileName.contains("[ENCRYPTED]") || currentFileName.contains("[DECRYPTED]"))
-        {
-            int index = currentFileName.indexOf("[ENCRYPTED]")+11;
-            return "[DECRYPTED]" + currentFileName.substring(index);
-        }
-        else return "[DECRYPTED]" + currentFileName;
+        return this.outputFile;
     }
-
-    private static StringBuilder getStringFromBytes(Charset charset, FileChannel fileChannel) throws IOException
-    {
-        byte [] byteArray = new byte [byteArraySize];
-        StringBuilder stringBuilder = new StringBuilder();
-        ByteBuffer byteBuffer = ByteBuffer.wrap(byteArray, 0, byteArray.length);
-        CharBuffer charBuffer = CharBuffer.allocate(byteArray.length / 2);
-        int bytesRead;
-        int iteration = 1;
-        byte [] bytes;
-
-        while ((bytesRead = fileChannel.read(byteBuffer)) >= 0)
-        {
-            fileChannel.read(byteBuffer);
-            bytes = byteBuffer.array();
-            if ((bytes[bytes.length-1] == -48)||(bytes[bytes.length-1] == -47))
-            {
-                byteBuffer.flip();
-                byteBuffer.limit(byteBuffer.capacity()-1);
-                charBuffer = charset.decode(byteBuffer);
-                byteBuffer.clear();
-                byteBuffer.put(bytes[bytes.length-1]);
-            } else
-            {
-                charBuffer = charset.decode(byteBuffer.flip());
-                byteBuffer.clear();
-            }
-            stringBuilder.append(charBuffer);
-        }
-        return stringBuilder;
-    }
-    */
 }

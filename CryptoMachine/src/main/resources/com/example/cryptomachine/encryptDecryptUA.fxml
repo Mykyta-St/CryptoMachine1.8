@@ -10,15 +10,13 @@
         fx:controller="com.example.cryptomachine.MainSceneController"
         prefHeight="600.0" prefWidth="800.0">
     <VBox AnchorPane.topAnchor="50"
-            AnchorPane.leftAnchor="50"
-          AnchorPane.rightAnchor="50"
+            AnchorPane.leftAnchor="100"
           spacing="10">
         <Label text="Виберіть файл з інформацією, що ви хочете зашифрувати"
                style="-fx-font-size: 24; -fx-font-weight: BOLD;"
                AnchorPane.topAnchor="50"
-               AnchorPane.rightAnchor="100"/>
+               AnchorPane.rightAnchor="200"/>
         <HBox AnchorPane.topAnchor="150"
-              AnchorPane.leftAnchor="100"
               AnchorPane.rightAnchor="100"
               spacing="10">
             <Button text="Виберіть файл" onAction="#chooseInputFile"
@@ -36,7 +34,13 @@
             <Button text="РОЗШИФРУВАТИ" onAction="#decrypttext"
                     style="-fx-background-color: #4385F4; -fx-text-fill: white; -fx-font-size: 20;"
                     alignment="CENTER"/>
-            <Button text="Назад" onAction="#switchToMainScene"
+            <TextField fx:id="shift" text=""
+                       style="-fx-font-size: 20;"
+            />
+        </HBox>
+        <HBox AnchorPane.topAnchor="600"
+              spacing="10">
+            <Button fx:id="mainScene" text="back to Main" onAction="#switchToMainScene"
                     style="-fx-background-color: #4385F4; -fx-text-fill: white; -fx-font-size: 20;"
                     alignment="CENTER_RIGHT"/>
         </HBox>

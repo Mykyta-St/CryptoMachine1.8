@@ -26,7 +26,6 @@ public class ParameterManager
     public ParameterManager(String [] arguments)
     {
         this.inputArguments = getInputArguments(arguments);
-        System.out.println("Input arguments: " + this.inputArguments);
         setProcess("");
         setShift(0);
         setInputText("");
@@ -168,19 +167,80 @@ public class ParameterManager
     }
 
     private void getParametersIfNull () {
+        if (this.process.equals("") || (this.shift == 0) || (this.inputFile == null))
+        {
+            System.out.println("Some parameter is missing. Enter [exit] anytime to cloase the application.");
+            Scanner scanner = new Scanner(System.in);
+            String scannerInput;
+            if (this.process.equals(""))
+            {
+                System.out.println("Choose operation.\n" +
+                    "For encryption input [encrypt] for decryption input [decrypt].");
+                scannerInput = scanner.nextLine();
+                while (!checkProcessParameter(scannerInput) && !scannerInput.equals("exit"))
+                {
+                    System.out.println("Enter [encrypt] or [decrypt]");
+                    scannerInput = scanner.nextLine();
+                }
+                if (scannerInput.equals("exit")) System.exit(0);
+            }
+            if (this.shift == 0)
+            {
+                if (process.equals("encrypt"))
+                {
+                    System.out.println("Choose shift of alphabet symbols. Input number.");
+                    scannerInput = scanner.nextLine();
+                    while (!checkShiftParameter(scannerInput) && !scannerInput.equals("exit"))
+                    {
+                        System.out.println("Enter number");
+                        scannerInput = scanner.nextLine();
+                    }
+                    if (scannerInput.equals("exit")) System.exit(0);
+                }
+            }
+            if (this.inputFile == null)
+            {
+                System.out.println("Input file name or path to file that you want to input text from:");
+                scannerInput = scanner.nextLine();
+                while (!checkFileParameter(scannerInput) && !scannerInput.equals("exit"))
+                {
+                    System.out.println("File doesn't exit or is empty! Input new file name or path to file.");
+                    scannerInput = scanner.nextLine();
+                }
+                if (scannerInput.equals("exit")) System.exit(0);
+                setInputText(FileManager.getStringFromFile(this.inputFile));
+            }
+        }
+        System.out.println("\nAll required parameters were obtained\n");
+    }
+
+    public void askForParametersChange ()
+    {
         Scanner scanner = new Scanner(System.in);
         String scannerInput;
-        if (this.process.equals("")) {
-            System.out.println("Choose operation.\n" +
-                    "For encryption input [encrypt] for decryption input [decrypt].");
+        System.out.println("Current process is set to: " + getProcess());
+        System.out.println("What process you would like to make?");
+        scannerInput = scanner.nextLine();
+        while (!checkProcessParameter(scannerInput) && !scannerInput.equals("exit"))
+        {
+            System.out.println("Enter [encrypt] or [decrypt]");
             scannerInput = scanner.nextLine();
-            while (!checkProcessParameter(scannerInput) && !scannerInput.equals("exit")) {
-                System.out.println("Enter [encrypt] or [decrypt]");
-                scannerInput = scanner.nextLine();
-            }
-            if (scannerInput.equals("exit")) System.exit(0);
         }
-        if (this.shift == 0) {
+        if (scannerInput.equals("exit")) System.exit(0);
+
+        System.out.println("Current inputfile is set to: " + getInputFile());
+        System.out.println("What inputfile you would like to use?");
+        scannerInput = scanner.nextLine();
+        while (!checkFileParameter(scannerInput) && !scannerInput.equals("exit"))
+        {
+            System.out.println("File doesn't exit or is empty! Input new file name or path to file.");
+            scannerInput = scanner.nextLine();
+        }
+        if (scannerInput.equals("exit")) System.exit(0);
+
+        if (process.equals("encrypt"))
+        {
+            System.out.println("Current key for encryption is set to: " + getShift());
             System.out.println("Choose shift of alphabet symbols. Input number.");
             scannerInput = scanner.nextLine();
             while (!checkShiftParameter(scannerInput) && !scannerInput.equals("exit")) {
@@ -189,22 +249,8 @@ public class ParameterManager
             }
             if (scannerInput.equals("exit")) System.exit(0);
         }
-        if (this.inputFile == null)
-        {
-            System.out.println("Input file name or path to file that you want to input text from:");
-            scannerInput = scanner.nextLine();
-            while (!checkFileParameter(scannerInput) && !scannerInput.equals("exit"))
-            {
-                System.out.println("File doesn't exit or is empty! Input new file name or path to file.");
-                scannerInput = scanner.nextLine();
-            }
-            if (scannerInput.equals("exit")) System.exit(0);
-            setInputText(FileManager.getStringFromFile(this.inputFile));
-        }
-        scanner.close();
         System.out.println("\nAll required parameters were obtained\n");
     }
-
     @Override
     public String toString()
     {

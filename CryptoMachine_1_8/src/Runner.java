@@ -21,23 +21,44 @@ public class Runner {
         encryptor = new Encryptor(process, inputText, shift);
         switch (process) {
             case "encrypt":
-                System.out.println("Plain text obtained:\n" + encryptor.getPlainText());
+                System.out.println("Plain text obtained from file:\n" +
+                        parameterManager.getInputFile() + "\n" + encryptor.getPlainText());
                 fileManager = new FileManager(parameterManager.getInputFile(),
                                                 parameterManager.getProcess(),
                                                     encryptor.getEncryptedText());
-                System.out.println("Encrypted text written:\n" + encryptor.getEncryptedText());
+                System.out.println("Encrypted text written to file:\n" +
+                        fileManager.getOutputFile() + "\n" + encryptor.getEncryptedText());
                 break;
             case "decrypt":
-                System.out.println("Encrypted text obtained:\n" + encryptor.getEncryptedText());
+                System.out.println("Encrypted text obtained from file:\n" +
+                        parameterManager.getInputFile() + "\n" + encryptor.getEncryptedText());
                 fileManager = new FileManager(parameterManager.getInputFile(),
                                                 parameterManager.getProcess(),
                                                     encryptor.getPlainText());
-                System.out.println("Plain text written:\n" + encryptor.getPlainText());
+                System.out.println("Plain text was written to file:\n" +
+                        fileManager.getOutputFile() + "\n" + encryptor.getPlainText());
                 break;
             default:
                 System.out.println("Process is not specified!!!");
                 break;
         }
+        repeat();
+    }
+    public void repeat()
+    {
+        System.out.println("Do you want to continue operation. Make your choise [yes] or [no]");
+        System.out.println("Input [exit] anytime to close the application");
+        Scanner sc = new Scanner(System.in);
+        String choise = sc.nextLine();
+        while (!toContinue (choise)) {
+            System.out.println("make your choise (yes/no):");
+            choise = sc.nextLine();
+        }
+        parameterManager.askForParametersChange();
+        runProcess( parameterManager.getProcess(),
+                    parameterManager.getInputText(),
+                    parameterManager.getShift());
+        System.out.println();
     }
 
     private boolean toContinue (String answer)
@@ -56,15 +77,4 @@ public class Runner {
         }
 
     }
-
-    public void repeat()
-    {
-        Scanner sc = new Scanner(System.in);
-        while (!toContinue (sc.nextLine())) {
-            System.out.println("make your choise (yes/no):");
-        }
-        System.out.println();
-        //parameterManager.askForParametersChange();
-    }
-
 }

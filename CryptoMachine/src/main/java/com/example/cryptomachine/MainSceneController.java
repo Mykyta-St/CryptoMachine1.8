@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 
+import java.nio.file.Path;
 import java.util.Objects;
 
 public class MainSceneController
@@ -26,6 +27,8 @@ public class MainSceneController
     private Parent root;
 
     private static Encryptor encryptor;
+
+    private String text;
     private static Language language;
     private static FileManager fileManager;
     @FXML
@@ -34,8 +37,12 @@ public class MainSceneController
     @FXML
     private Label chooseComment;
     @FXML
+    private TextField shift;
+    @FXML
     private void switchToMainScene(ActionEvent event) throws IOException {
         root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("index.fxml")));
+        encryptor.setEncryptedText(null);
+        encryptor.setPlainText(null);
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
@@ -45,6 +52,7 @@ public class MainSceneController
     @FXML
     private void switchToScene2EN(ActionEvent event) throws IOException {
         language = Language.ENGLISH;
+        encryptor = new Encryptor(language);
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("EncryptDecryptEN.fxml")));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -54,6 +62,7 @@ public class MainSceneController
     @FXML
     private void switchToScene2UA(ActionEvent event) throws IOException {
         language = Language.UKRAINIAN;
+        encryptor = new Encryptor(language);
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("EncryptDecryptUA.fxml")));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -63,6 +72,7 @@ public class MainSceneController
     @FXML
     private void switchToScene2RU(ActionEvent event) throws IOException {
         language = Language.RUSSIAN;
+        encryptor = new Encryptor(language);
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("EncryptDecryptRU.fxml")));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -77,98 +87,82 @@ public class MainSceneController
                 new FileChooser.ExtensionFilter("Text Files", "*.txt"));
         try
         {
-            File inputfile = fileChooser.showOpenDialog(stage);
+            Path inputFile = fileChooser.showOpenDialog(stage).toPath();
             fileManager = new FileManager();
-            encryptor = new Encryptor(language);
             textarea = new TextArea();
             textarea.prefWidth(400);
             textarea.setWrapText(true);
             scrollpane.setContent(textarea);
-            encryptor.setPlainText(fileManager.getInputText(inputfile));
-            //System.out.println("==============\n" + encryptor.getPlainText());
-            textarea.setText(encryptor.getPlainText());
-            this.chooseComment.setTextFill(Color.color(0, 1, 0));
-            if (language == Language.ENGLISH) {
-                this.chooseComment.setText("Text was taken from input file");
-            } else if (language == Language.UKRAINIAN) {
-                this.chooseComment.setText("Текст прочитано із наданого файла");
-            } else if (language == Language.RUSSIAN) {
-                this.chooseComment.setText("Текст прочитан из выбранного файла");
+            this.text = fileManager.getInputText(inputFile);
+            if (text.length() == 0)
+            {
+                textarea.setText("file contains no text");
+                this.text = null;
+                throw new NullPointerException();
+            } else
+            {
+                textarea.setText(text);
+                this.chooseComment.setTextFill(Color.color(0, 1, 0));
+                this.chooseComment.setText(LabelTextController.textWasTakenFromFileText(language));
             }
+
         } catch (NullPointerException e)
         {
             this.chooseComment.setTextFill(Color.color(1, 0, 0));
-            if (language == Language.ENGLISH) {
-                this.chooseComment.setText("you need to choose a file! Right now!");
-            } else if (language == Language.UKRAINIAN) {
-                this.chooseComment.setText("ви маєте вибрати файл! Негайно!");
-            } else if (language == Language.RUSSIAN) {
-                this.chooseComment.setText("нужно выбрать хВайл! Прям щас!");
-            }
+            this.chooseComment.setText(LabelTextController.fileNotChoosenText(language));
             e.printStackTrace();
         }
+        System.out.println(encryptor.getPlainText());
+        System.out.println(encryptor.getEncryptedText());
     }
 
     @FXML
     private void encrypttext() {
         try {
-            encryptor.encryptSezar();
-            fileManager.createOutputFile(encryptor.getEncryptedText(), "encrypt", language);
-            textarea.setText(encryptor.getEncryptedText());
+            encryptor.setPlainText(text);
+            encryptor.encryptSezar(checkShift());
+            this.text = encryptor.getEncryptedText();
+            fileManager.createOutputFile(this.text, "encrypt", language);
+            textarea.setText(this.text);
+            encryptor.setPlainText(null);
+            encryptor.setEncryptedText(null);
             this.chooseComment.setTextFill(Color.color(0, 1, 0));
-            if (language == Language.ENGLISH) {
-                this.chooseComment.setText("New file with encrypted text was created");
-            } else if (language == Language.UKRAINIAN) {
-                this.chooseComment.setText("Створено новий файл з зашифрованим текстом");
-            } else if (language == Language.RUSSIAN) {
-                this.chooseComment.setText("Создан новый файл с зашЫфрованным текстом");
-            }
+            this.chooseComment.setText(LabelTextController.newFileCreatedText(language));
         } catch (NullPointerException e)
         {
             this.chooseComment.setTextFill(Color.color(1, 0, 0));
-            if (language == Language.ENGLISH) {
-                this.chooseComment.setText("First you need to choose a file!");
-            } else if (language == Language.UKRAINIAN) {
-                this.chooseComment.setText("Спочатку ви маєте вибрати файл!");
-            } else if (language == Language.RUSSIAN) {
-                this.chooseComment.setText("Необходимо сперва выбрать файл!");
-            }
+            this.chooseComment.setText(LabelTextController.needToChooseFileFirstText(language));
             e.printStackTrace();
         }
+        System.out.println(encryptor.getPlainText());
+        System.out.println(encryptor.getEncryptedText());
     }
 
     @FXML
     private void decrypttext() {
         try
         {
-            if (encryptor.getEncryptedText()==null) {
-                encryptor.setEncryptedText(encryptor.getPlainText());
-                encryptor.setPlainText("");
-            }
-                fileManager.createOutputFile(encryptor.decrypt(encryptor.getEncryptedText()), "decrypt", language);
-                textarea.setText(encryptor.getPlainText());
+            encryptor.setEncryptedText(this.text);
+            this.text = encryptor.decrypt();
+            fileManager.createOutputFile(this.text, "decrypt", language);
+            this.text = encryptor.getPlainText();
+            textarea.setText(this.text);
+            encryptor.setEncryptedText(null);
             this.chooseComment.setTextFill(Color.color(0, 1, 0));
-            if (language == Language.ENGLISH) {
-                this.chooseComment.setText("Look decryption results below");
-            } else if (language == Language.UKRAINIAN) {
-                this.chooseComment.setText("Знизу результати дешиврування");
-            } else if (language == Language.RUSSIAN) {
-                this.chooseComment.setText("Результати расшЫфровки внизу");
-            }
+            this.chooseComment.setText(LabelTextController.textWasDecryptedText(language));
         }
         catch (NullPointerException e)
         {
             this.chooseComment.setTextFill(Color.color(1, 0, 0));
-            if (language == Language.ENGLISH) {
-                this.chooseComment.setText("First you need to choose a file!");
-            } else if (language == Language.UKRAINIAN) {
-                this.chooseComment.setText("Спочатку ви маєте вибрати файл!");
-            } else if (language == Language.RUSSIAN) {
-                this.chooseComment.setText("Необходимо сперва выбрать файл!");
-            }
+            this.chooseComment.setText(LabelTextController.needToChooseFileFirstText(language));
             e.printStackTrace();
         }
     }
 
+    private int checkShift()
+    {
+        if (shift.getText().equals("")) return 25;
+        else return Integer.parseInt(shift.getText());
+    }
 
 }

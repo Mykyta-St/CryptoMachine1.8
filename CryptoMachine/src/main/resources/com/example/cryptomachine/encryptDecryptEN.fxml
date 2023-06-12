@@ -11,7 +11,6 @@
         prefHeight="600.0" prefWidth="800.0">
     <VBox AnchorPane.topAnchor="50"
             AnchorPane.leftAnchor="100"
-          AnchorPane.rightAnchor="200"
           spacing="10">
         <Label fx:id="choose" text="Choose input file with the text for encryption"
 
@@ -38,6 +37,15 @@
             <Button fx:id="deCrypt" text="DECRYPT" onAction="#decrypttext"
                     style="-fx-background-color: #4385F4; -fx-text-fill: white; -fx-font-size: 20;"
                     alignment="CENTER"/>
+            <Label text="Encryption shift"
+                   style="-fx-font-size: 20; -fx-font-weight: BOLD;"
+                   AnchorPane.leftAnchor="100"/>
+            <TextField fx:id="shift" text=""
+                       style="-fx-font-size: 20;"
+            />
+        </HBox>
+        <HBox AnchorPane.topAnchor="600"
+              spacing="10">
             <Button fx:id="mainScene" text="back to Main" onAction="#switchToMainScene"
                     style="-fx-background-color: #4385F4; -fx-text-fill: white; -fx-font-size: 20;"
                     alignment="CENTER_RIGHT"/>

@@ -1,7 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class Alphabet
 {
@@ -10,7 +7,6 @@ public class Alphabet
     private String [] vocabulary;
     Alphabet (Language language)
     {
-        //this.language = language;
         initializeAlphabet(language);
     }
 
@@ -24,11 +20,6 @@ public class Alphabet
         return alphabetSize;
     }
 
-    //public Language getLanguage ()
-    //{
-    //    return language;
-    //}
-
     //initializing corresponding set of alphabetic symbols
     // after getting corresponding Language parameter
     private void initializeAlphabet(Language language)
@@ -40,19 +31,7 @@ public class Alphabet
             setAlphabet(russianAlphabet, russianVocabulary);
         } else if (language == Language.UKRAINIAN) {
             setAlphabet(ukrainianAlphabet, ukrainianVocabulary);
-
-         /*
-            this.alphabet = russianAlphabet;
-            this.alphabetSize = alphabet.length;
-            this.vocabulary = russianVocabulary;
-        } else if (language == Language.UKRAINIAN)
-        {
-            this.alphabet = ukrainianAlphabet;
-            this.alphabetSize = alphabet.length;
-            this.vocabulary = ukrainianVocabulary;
-         */
-
-        }else throw new IllegalArgumentException("program doesn't support such language");
+        } else throw new IllegalArgumentException("program doesn't support such language");
     }
 
     private void setAlphabet(char [] alphabet, String [] vocabulary) {

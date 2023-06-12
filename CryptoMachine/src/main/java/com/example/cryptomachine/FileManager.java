@@ -5,48 +5,47 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 public class FileManager
 {
-    private File inputFile;
-    private File outputFile;
+    private Path inputFile;
+    private Path outputFile;
 
-    Encryptor encryptor;
+    private static final int byteArraySize = 2*3*24;
 
-    public String getInputText(File inputFile)
+    public String getInputText(Path inputFile)
     {
         this.inputFile = inputFile;
-        Charset charset = Charset.forName("UTF-8");
-        StringBuilder sB = new StringBuilder();
+        Charset charset = StandardCharsets.UTF_8;
+        StringBuilder stringBuilder = new StringBuilder();
 
-        try(RandomAccessFile inFile = new RandomAccessFile(inputFile.getName(), "r");
-            FileChannel readChannel = inFile.getChannel();)
+        try(RandomAccessFile inputDataFile = new RandomAccessFile(inputFile.toFile(), "r");
+            FileChannel readChannel = inputDataFile.getChannel())
         {
 
-            sB.append(getStringFromBytes(charset, readChannel));
+            stringBuilder.append(getStringFromBytes(charset, readChannel));
 
         } catch (IOException e)
         {
             e.printStackTrace();
         }
-        return sB.toString().toLowerCase();
+        return stringBuilder.toString().toLowerCase();
     }
 
     private static StringBuilder getStringFromBytes(Charset charset, FileChannel fileChannel) throws IOException
     {
-        byte [] byteArray = new byte [2*3*24];
-        StringBuilder sb = new StringBuilder();
+        byte [] byteArray = new byte [byteArraySize];
+        StringBuilder stringBuilder = new StringBuilder();
         ByteBuffer byteBuffer = ByteBuffer.wrap(byteArray, 0, byteArray.length);
         CharBuffer charBuffer = CharBuffer.allocate(byteArray.length / 2);
-        int bytesRead = 0;
+        int bytesRead;
         int iteration = 1;
         byte [] bytes;
 
         while ((bytesRead = fileChannel.read(byteBuffer)) >= 0)
         {
-            System.out.println("Iteration: " + iteration + " Bytes read: " + bytesRead);
             fileChannel.read(byteBuffer);
             bytes = byteBuffer.array();
             if ((bytes[bytes.length-1] == -48)||(bytes[bytes.length-1] == -47))
@@ -61,43 +60,61 @@ public class FileManager
                 charBuffer = charset.decode(byteBuffer.flip());
                 byteBuffer.clear();
             }
-            System.out.println();
-            sb.append(charBuffer);
+            stringBuilder.append(charBuffer);
         }
-        System.out.println(sb);
-        return sb;
+        return stringBuilder;
     }
     public void createOutputFile (String outputText, String process, Language language)
-    {File directory = inputFile.getParentFile();
+    {
+        Path directory = inputFile.getParent();
         if (process.equals("encrypt")) {
-            if (language == Language.ENGLISH) outputFile = new File(directory, "encryptedFileEN.txt");
-            else if (language == Language.UKRAINIAN) outputFile = new File(directory, "encryptedFileUA.txt");
-            else if (language == Language.RUSSIAN) outputFile = new File(directory, "encryptedFileRU.txt");
+                outputFile = Path.of(directory.toString(), encryptedFileName(inputFile));
         }
         else {
-            if (language == Language.ENGLISH) outputFile = new File(directory,"DEcryptedFileEN.txt");
-            else if (language == Language.UKRAINIAN) outputFile = new File(directory,"DEcryptedFileUA.txt");
-            else if (language == Language.RUSSIAN) outputFile = new File(directory,"DEcryptedFileRU.txt");
+            outputFile = Path.of(directory.toString(), decryptedFileName(inputFile));
         }
         try {
-            if (!outputFile.createNewFile()) {
-                outputFile.delete();
-            } else outputFile.createNewFile();
+            if (!outputFile.toFile().createNewFile()) {
+                outputFile.toFile().delete();
+            } else outputFile.toFile().createNewFile();
         }catch (IOException e)
         {
             e.printStackTrace();
         }
-        try (RandomAccessFile randomAccessFile = new RandomAccessFile(outputFile.getName(), "rw");
-             FileChannel channel = randomAccessFile.getChannel();
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(outputFile.toFile(), "rw");
+             FileChannel channel = randomAccessFile.getChannel()
             )
         {
 
             ByteBuffer byteBufferr = ByteBuffer.allocate(outputText.getBytes().length);
-            byteBufferr.put(outputText.getBytes("UTF-8"));
+            byteBufferr.put(outputText.getBytes(StandardCharsets.UTF_8));
             byteBufferr.flip();
             channel.write(byteBufferr);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private String encryptedFileName(Path fileName)
+    {
+        String currentFileName = fileName.getFileName().toString();
+
+        if (currentFileName.contains("[ENCRYPTED]") || currentFileName.contains("[DECRYPTED]"))
+        {
+           int index = currentFileName.indexOf("[ENCRYPTED]")+11;
+           return "[ENCRYPTED]" + currentFileName.substring(index);
+        }
+        else return "[ENCRYPTED]" + currentFileName;
+    }
+    private String decryptedFileName(Path fileName)
+    {
+        String currentFileName = fileName.getFileName().toString();
+
+        if (currentFileName.contains("[ENCRYPTED]") || currentFileName.contains("[DECRYPTED]"))
+        {
+            int index = currentFileName.indexOf("[ENCRYPTED]")+11;
+            return "[DECRYPTED]" + currentFileName.substring(index);
+        }
+        else return "[DECRYPTED]" + currentFileName;
     }
 }

@@ -1,18 +1,20 @@
 package com.example.cryptomachine;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Alphabet
 {
-    private Language language;
-    private char [] alphabet;
+    private List<Character> alphabet;
     private int alphabetSize;
-
     private String [] vocabulary;
     Alphabet (Language language)
     {
-        this.language = language;
+        //this.language = language;
         initializeAlphabet(language);
     }
 
-    public char [] getAlphabet ()
+    public List <Character> getAlphabet ()
     {
         return alphabet;
     }
@@ -22,44 +24,70 @@ public class Alphabet
         return alphabetSize;
     }
 
-    public Language getLanguage ()
-    {
-        return language;
-    }
+    //public Language getLanguage ()
+    //{
+    //    return language;
+    //}
+
+    //initializing corresponding set of alphabetic symbols
+    // after getting corresponding Language parameter
     private void initializeAlphabet(Language language)
     {
         //this.alphabet = new ArrayList <Character>();
-        if (language == Language.ENGLISH)
-        {
-            this.alphabet = new char []
-                    {'a','b','c','d','e','f','g','h','i','j',
-                            'k','l','m','n','o','p','q','r','s','t','u',
-                            'v','w','x','y','z','.',',','!','?',' ','"',':','-','—'
-                    };
-            this.alphabetSize = alphabet.length;
-            this.vocabulary = englishVocabulary;
-        } else if (language == Language.RUSSIAN)
-        {
-            this.alphabet = new char []
-                    {'а','б','в','г','д','е','ё','ж','з','и',
-                            'й','к','л','м','н','о','п','р','с','т',
-                            'у','ф','х','ц','ч','ш','щ','ь','ы','ъ',
-                            'э','ю','я','.',',','!','?',' ','"',':','–','—'
-                    };
+        if (language == Language.ENGLISH) {
+            setAlphabet(englishAlphabet, englishVocabulary);
+        } else if (language == Language.RUSSIAN) {
+            setAlphabet(russianAlphabet, russianVocabulary);
+        } else if (language == Language.UKRAINIAN) {
+            setAlphabet(ukrainianAlphabet, ukrainianVocabulary);
+
+         /*
+            this.alphabet = russianAlphabet;
             this.alphabetSize = alphabet.length;
             this.vocabulary = russianVocabulary;
         } else if (language == Language.UKRAINIAN)
         {
-            this.alphabet = new char []
-                    {'а','б','в','г','д','е','є','ж','з','и','й',
-                            'і','ї','к','л','м','н','о','п','р','с',
-                            'т','у','ф','х','ц','ч','ш','щ','ь',
-                            'ю','я','.',',','!','?',' ', '"',':','-','—'
-                    };
+            this.alphabet = ukrainianAlphabet;
             this.alphabetSize = alphabet.length;
             this.vocabulary = ukrainianVocabulary;
+         */
+
         }else throw new IllegalArgumentException("program doesn't support such language");
     }
+
+    private void setAlphabet(char [] alphabet, String [] vocabulary) {
+        this.alphabet = new ArrayList<>();
+        for (char c: alphabet)
+        {
+            this.alphabet.add(c);
+        }
+        this.alphabetSize = this.alphabet.size();
+        this.vocabulary = vocabulary;
+    }
+
+    public String [] getVocabulary ()
+    {
+        return vocabulary;
+    }
+
+    //набір символів трьох абеток задля ініціалізації абетки для кодування
+    private final char [] englishAlphabet = {
+            'a','b','c','d','e','f','g','h','i','j',
+            'k','l','m','n','o','p','q','r','s','t','u',
+            'v','w','x','y','z','.',',','!','?',' ','"',':','-','—'
+    };
+    private final char [] russianAlphabet = {
+            'а','б','в','г','д','е','ё','ж','з','и',
+            'й','к','л','м','н','о','п','р','с','т',
+            'у','ф','х','ц','ч','ш','щ','ь','ы','ъ',
+            'э','ю','я','.',',','!','?',' ','"',':','–','—'
+    };
+    private final char [] ukrainianAlphabet = {
+            'а','б','в','г','д','е','є','ж','з','и','й',
+            'і','ї','к','л','м','н','о','п','р','с',
+            'т','у','ф','х','ц','ч','ш','щ','ь',
+            'ю','я','.',',','!','?',' ', '"',':','-','—'
+    };
 
     //набір слів широко вживаних у різних мовах. за навністю цих слів у декодованому рядку можна зробити висновок,
     //що рядок декодовано правильно
@@ -87,11 +115,6 @@ public class Alphabet
             " мені ", " тобі ", " йому ", " їй ", " нам ", " їм ",
             ". ", ", ", ": ", " - ", "! ", "? "
     };
-
-    public String [] getVocabulary ()
-    {
-        return vocabulary;
-    }
 }
 
 enum Language

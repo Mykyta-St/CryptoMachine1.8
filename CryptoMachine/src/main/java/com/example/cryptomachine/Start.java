@@ -30,15 +30,6 @@ public class Start extends Application {
         {
             e.printStackTrace();
         }
-        //primaryStage.setTitle("Crypto Machine App");
-        //FXMLLoader fxmlLoader = new FXMLLoader(Start.class.getResource("index.fxml"));
-        //Scene primaryScene = new Scene(fxmlLoader.load());
-        //InputStream iconStream = getClass().getResourceAsStream("/lock.png");
-        //Image image = new Image(iconStream);
-        //primaryStage.getIcons().add(image);
-        //primaryStage.setScene(primaryScene);
-        //primaryStage.show();
-
     }
 }
 

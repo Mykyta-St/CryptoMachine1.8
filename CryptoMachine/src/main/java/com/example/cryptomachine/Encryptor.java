@@ -13,25 +13,20 @@ public class Encryptor
     public Encryptor (Language language)
     {
         alphabet = new Alphabet(language);
+        setPlainText(null);
+        setEncryptedText(null);
     }
-    private static final int SHIFT =35;
+    private static int SHIFT =35;
 
-    public void setPlainText(String inputText)
-    {
-        plainText = inputText;
-    }
-
-    public String encryptSezar()
+    public void encryptSezar(int shift)
     {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < plainText.length(); i++)
         {
             char sign =plainText.charAt(i);
-            sb.append(processSign(sign, SHIFT));
+            sb.append(processSign(sign, shift));
         }
         setEncryptedText(sb.toString());
-        //System.out.println(encryptedText);
-        return encryptedText;
     }
 
     //
@@ -61,8 +56,8 @@ public class Encryptor
     //getting new sign by shifting original sign in the dictionary on "shift" number of letters
     private static char getNewSign(char sign, int encryptionShift)
     {
-        //System.out.print("plaintext sign: " + sign + "\t");
-        int originalIndex = indexOf(alphabet.getAlphabet(), sign);
+        //int originalIndex = indexOf(alphabet.getAlphabet(), sign);
+        int originalIndex = alphabet.getAlphabet().indexOf(sign);
         if (originalIndex == -1)
         {
             sign = '#';
@@ -70,10 +65,11 @@ public class Encryptor
         } else
         {
             int newIndex;
-            if ((originalIndex + encryptionShift) >= alphabet.getAlphabetSize() - 1)
+            encryptionShift = encryptionShift % alphabet.getAlphabetSize();
+            if ((originalIndex + encryptionShift) >= (alphabet.getAlphabetSize() - 1))
                 newIndex = encryptionShift - (alphabet.getAlphabetSize() - 1 - originalIndex);
             else newIndex = originalIndex + encryptionShift;
-            sign = alphabet.getAlphabet()[newIndex];
+            sign = alphabet.getAlphabet().get(newIndex);
             //System.out.print("Encryped sign: " + sign + "\n");
         }
         return sign;
@@ -83,7 +79,7 @@ public class Encryptor
     //2. checking each possible decrypted text for containing of commonly used words from vocabulary
     //3. the one possible decrypted text with the biggest amount of matches becomes Plain text
 
-    public String decrypt (String encryptedText)
+    public String decrypt ()
     {
         return decryptWithBrutForce(encryptedText);
     }
@@ -96,18 +92,18 @@ public class Encryptor
     }
 
     //by iterating of shift through all the alphabet, getting decrypted text variants
-    public static ArrayList<String> getPossibleDeCryptedTexts(String encryptedText)
+    private static ArrayList<String> getPossibleDeCryptedTexts(String encryptedText)
     {
         ArrayList<String> possibleDecryptedTexts = new ArrayList<>();
         for (int possibleShift = 0; possibleShift < alphabet.getAlphabetSize(); possibleShift++)
         {
-            possibleDecryptedTexts.add(decryptSezar(possibleShift));
+            possibleDecryptedTexts.add(decryptSezar(possibleShift, encryptedText));
         }
         return possibleDecryptedTexts;
     }
 
     //using the same algorithm as encryption method, but for encrypted text
-    public static String decryptSezar(int possibleShift)
+    private static String decryptSezar(int possibleShift, String encryptedText)
     {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < encryptedText.length(); i++)
@@ -120,7 +116,7 @@ public class Encryptor
 
     //returning only one variant (containing the biggest amount of commonly used words/signs)
     // out of all decrypted text variants
-    private static String getBestMatchText(ArrayList<String> possibleDecryptedTexts)
+    private String getBestMatchText(ArrayList<String> possibleDecryptedTexts)
     {
         int variantIndexWithBestMatch = -1;
         int maxMatches = -1;
@@ -137,7 +133,12 @@ public class Encryptor
             }
         }
         if (variantIndexWithBestMatch>=0) return possibleDecryptedTexts.get(variantIndexWithBestMatch);
-        else return "it is not possible to decrypt this text";
+        else
+        {
+            this.setEncryptedText(null);
+            this.setPlainText(null);
+            return "it is not possible to decrypt this text";
+        }
     }
 
     //checking that encrypted text contains some commonly used words/signs from vocabulary
@@ -162,6 +163,10 @@ public class Encryptor
         return plainText;
     }
 
+    public void setPlainText(String inputText)
+    {
+        plainText = inputText;
+    }
     public void setEncryptedText(String text)
     {
         encryptedText = text;
@@ -169,6 +174,7 @@ public class Encryptor
 
 
     //created method indexOf, because method Arrays.binarySearch was not able to find symbols correctly
+    /*
     private static int indexOf(char[] array, char sign)
     {
         for (int i = 0; i < array.length; i++)
@@ -177,6 +183,7 @@ public class Encryptor
         }
         return -1;
     }
+    */
 
     /*
     //getting decrypted symbols as opposite shifting the character in volabulary.

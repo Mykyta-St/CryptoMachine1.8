@@ -126,8 +126,6 @@ public class Encryptor
                     newIndex = encryptionShift + originalIndex;
                 }
             }
-            //sign = alphabet.getAlphabet().get(newIndex);
-            //System.out.print("Encryped sign: " + sign + "\n");
         } else return sign;
         return alphabet.getAlphabet().get(newIndex);
     }
@@ -142,11 +140,9 @@ public class Encryptor
     }
 
 
-
     private void decryptWithBrutForce(String encryptedText)
     {
         setPlainText(getBestMatchText(getPossibleDeCryptedTexts(encryptedText)));
-        //setPlainText(deCryptWithKnownShift(encryptedText,SHIFT));
     }
 
 
@@ -240,77 +236,4 @@ public class Encryptor
     {
         this.process = process;
     }
-
-    /*
-    public void encryptSezar(int shift)
-    {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < plainText.length(); i++)
-        {
-            char sign =plainText.charAt(i);
-            sb.append(processSign(sign, shift));
-        }
-        setEncryptedText(sb.toString());
-    }
-
-    public String decrypt ()
-    {
-        return decryptWithBrutForce(encryptedText);
-    }
-
-    private String decryptWithBrutForce(String encryptedText)
-    {
-        setPlainText(getBestMatchText(getPossibleDeCryptedTexts(encryptedText)));
-        //setPlainText(deCryptWithKnownShift(encryptedText,SHIFT));
-        return plainText;
-    }
-
-
-    //created method indexOf, because method Arrays.binarySearch was not able to find symbols correctly
-
-    private static int indexOf(char[] array, char sign)
-    {
-        for (int i = 0; i < array.length; i++)
-        {
-            if (sign == array[i]) return i;
-        }
-        return -1;
-    }
-    */
-
-    /*
-    //getting decrypted symbols as opposite shifting the character in volabulary.
-    //not used method
-    public static String deCryptWithKnownShift(String encryptedText, int knownShift)
-    {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < encryptedText.length(); i++) {
-            char sign = encryptedText.charAt(i);
-
-            if (sign == '\uFEFF') {
-                //System.out.print("Plain sign: '\\uFEFF'\tEncryped sign: '\\uFEFF' \n");
-            } else if (sign == '\r') {
-                //System.out.println("Plain text: '\\r'\tEncryped sign: '\\r'\n");
-            } else if (sign == '\n') {
-                //System.out.println("Plain text: '\\n'\tEncryped sign: '\\n'\n");
-            } else {
-                //System.out.print("plaintext sign: " + sign + "\t");
-                int originalIndex = indexOf(alphabet.getAlphabet(), sign);
-                if (originalIndex == -1) {
-                    sign = '#';
-                    //System.out.print("Encryped sign: " + sign + "\n");
-                } else {
-                    int newIndex;
-                    if ((originalIndex - knownShift) < 0)
-                        newIndex = alphabet.getAlphabetSize() - 1 + (originalIndex - knownShift);
-                    else newIndex = originalIndex - knownShift;
-                    sign = alphabet.getAlphabet()[newIndex];
-                    //System.out.print("Encryped sign: " + sign + "\n");
-                }
-            }
-            sb.append(sign);
-        }
-        return sb.toString();
-    }
-    */
 }
